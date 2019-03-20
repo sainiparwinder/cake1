@@ -1,0 +1,25 @@
+2019-03-15 03:48:25 Notice: Notice (8): Undefined index: Friends in [/var/www/html/face/vendor/cakephp/bake/src/View/Helper/DocBlockHelper.php, line 243]
+Trace:
+Cake\Error\BaseErrorHandler::handleError() - CORE/src/Error/BaseErrorHandler.php, line 159
+Bake\View\Helper\DocBlockHelper::buildTableAnnotations() - ROOT/vendor/cakephp/bake/src/View/Helper/DocBlockHelper.php, line 243
+Twig_Template::getAttribute() - ROOT/vendor/twig/twig/lib/Twig/Template.php, line 675
+__TwigTemplate_f2d6021dbfbdc0630e3e0dca643d6d70eadfaa7a12553dc54a4af8749b673e08::doDisplay() - ROOT/tmp/cache/twigView/98/98a9b79282b47aed0ede79331d77193a950f2602390256b4e31e67a02033a295.php, line 22
+Twig_Template::displayWithErrorHandling() - ROOT/vendor/twig/twig/lib/Twig/Template.php, line 428
+Twig_Template::display() - ROOT/vendor/twig/twig/lib/Twig/Template.php, line 399
+Twig_Template::render() - ROOT/vendor/twig/twig/lib/Twig/Template.php, line 407
+WyriHaximus\TwigView\View\TwigView::_render() - ROOT/vendor/wyrihaximus/twig-view/src/View/TwigView.php, line 180
+Bake\View\BakeView::render() - ROOT/vendor/cakephp/bake/src/View/BakeView.php, line 146
+Bake\Shell\Task\BakeTemplateTask::generate() - ROOT/vendor/cakephp/bake/src/Shell/Task/BakeTemplateTask.php, line 91
+Bake\Shell\Task\ModelTask::bakeTable() - ROOT/vendor/cakephp/bake/src/Shell/Task/ModelTask.php, line 1014
+Bake\Shell\Task\ModelTask::bake() - ROOT/vendor/cakephp/bake/src/Shell/Task/ModelTask.php, line 115
+Bake\Shell\Task\ModelTask::main() - ROOT/vendor/cakephp/bake/src/Shell/Task/ModelTask.php, line 101
+Bake\Shell\BakeShell::Bake\Shell\{closure}() - ROOT/vendor/cakephp/bake/src/Shell/BakeShell.php, line 279
+Cake\Collection\Collection::each() - CORE/src/Collection/CollectionTrait.php, line 51
+Bake\Shell\BakeShell::all() - ROOT/vendor/cakephp/bake/src/Shell/BakeShell.php, line 280
+Cake\Console\Shell::runCommand() - CORE/src/Console/Shell.php, line 518
+Cake\Console\CommandRunner::runShell() - CORE/src/Console/CommandRunner.php, line 371
+Cake\Console\CommandRunner::run() - CORE/src/Console/CommandRunner.php, line 166
+[main] - ROOT/bin/cake.php, line 12
+
+
+
