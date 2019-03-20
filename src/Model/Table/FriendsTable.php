@@ -43,7 +43,12 @@ class FriendsTable extends Table
 
         $this->belongsTo('Users', [
             'foreignKey' => 'user_id',
-            'joinType' => 'INNER'
+            'joinType' => 'LEFT'
+        ]);
+        
+        $this->belongsTo('Budies', [
+            'foreignKey' => 'budy_id',
+            'joinType' => 'LEFT'
         ]);
     }
 

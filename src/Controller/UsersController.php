@@ -13,6 +13,12 @@ use App\Controller\AppController;
 class UsersController extends AppController
 {
 
+
+	public function initialize() {
+        parent::initialize();
+        $this->Auth->allow(['login', 'add']);
+	}
+
     /**
      * Index method
      *
@@ -26,11 +32,14 @@ class UsersController extends AppController
     }
     public function login()
     {
+		if($this->Auth->user()){
+			return $this->redirect(['controller'=>'Users', 	'action'=>'index']);
+		}
         if ($this->request->is('post')) {
             $user = $this->Auth->identify();
             if ($user) {
                 $this->Auth->setUser($user);
-                return $this->redirect($this->Auth->redirectUrl());
+                return $this->redirect(['controller'=>'Users','action'=>'index']);
             }
             $this->Flash->error('Your username or password is incorrect.');
         }

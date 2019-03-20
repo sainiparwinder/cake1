@@ -28,9 +28,11 @@ class Friend extends Entity
      */
     protected $_accessible = [
         'user_id' => true,
+        'budy_id' => true,
         'status' => true,
         'created' => true,
         'modified' => true,
         'user' => true
+        'budy' => true
     ];
 }
