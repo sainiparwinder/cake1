@@ -42,6 +42,7 @@ $cakeDescription = 'CakePHP: the rapid development php framework';
     <?= $this->fetch('meta') ?>
     <?= $this->fetch('css') ?>
     <?= $this->fetch('script') ?>
+    <?php $userdata= $this->request->session()->read('Auth.User') ?>  
 </head>
 <body>
     <nav class="top-bar expanded" data-topbar role="navigation">
@@ -50,10 +51,17 @@ $cakeDescription = 'CakePHP: the rapid development php framework';
                 <h1><a href=""><?= $this->fetch('title') ?></a></h1>
             </li>
         </ul>
+            
         <div class="top-bar-section">
             <ul class="right">
-                <li><a target="_blank" href="https://book.cakephp.org/3.0/">Documentation</a></li>
-                <li><a target="_blank" href="https://api.cakephp.org/3.0/">API</a></li>
+                
+                <?php if($userdata): ?> 
+                    <li><?= $this->Html->link(__($userdata['name']), ['action' => 'edit', $userdata['id']]) ?></li>
+                     <li><?= $this->Html->link(__('Log out'), ['action' => 'logout']) ?></li>
+                
+                <?php else: ?>
+                 <li><?= $this->Html->link(__('Log In'), ['action' => 'login']) ?></li>    
+                <?php endif; ?>
             </ul>
         </div>
     </nav>

@@ -52,11 +52,34 @@ $(document).ready(function(){
 			rules:{
 				email_phone:{
 					required:true,
-					email:true,
+					email:false,
 					maxlength:20
 					},
 				password:{required:true},
 				}
 			});
-        
+           $('#userForm').validate({
+             rules:{
+                email_phone:{
+                    required:true,
+                    maxlength:20
+                },
+                name:{
+                    required:true,
+                },
+                surname:{
+                    required:true,
+                },
+
+                password:{
+                    required:true,
+                },
+                confirm_password:{
+                    required:true,
+                    equalTo:"#password",
+                },
+             }
+           });
+            
+
 }); 

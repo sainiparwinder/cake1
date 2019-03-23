@@ -25,10 +25,13 @@ class UsersController extends AppController
      * @return \Cake\Http\Response|void
      */
     public function index()
-    {
+    {   $userdata= $this->request->session()->read('Auth.User');
+       
         $users = $this->paginate($this->Users);
 
         $this->set(compact('users'));
+        $this->set('user_session',$userdata);
+
     }
     public function login()
     {
