@@ -25,9 +25,13 @@ class UsersController extends AppController {
      * @return \Cake\Http\Response|void
      */
     public function index() {
+        $userData = $this->Auth->user();
+        //pr($userData); die;
+
         $users = $this->paginate($this->Users);
 
         $this->set(compact('users'));
+        $this->set('user_session', $userData);
     }
 
     public function login() {
@@ -93,6 +97,9 @@ class UsersController extends AppController {
         if ($this->request->is(['patch', 'post', 'put'])) {
             $user = $this->Users->patchEntity($user, $this->request->getData());
             if ($this->Users->save($user)) {
+                if($id == $this->Auth->user('id')) {
+                    $this->Auth->setUser($user);
+                }
                 $this->Flash->success(__('The user has been saved.'));
 
                 return $this->redirect(['action' => 'index']);

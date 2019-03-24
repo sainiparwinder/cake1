@@ -17,8 +17,9 @@
     <fieldset>
         <legend><?= __('Add Friend') ?></legend>
         <?php
-            echo $this->Form->control('user_id', ['options' => $users]);
-            echo $this->Form->control('status');
+            echo $this->Form->control('user_id', ['type' => 'hidden', 'value'=>$authUser]);
+            echo $this->Form->control('budy_id', ['options' => $budies]);
+            echo $this->Form->control('status', ['value'=>'Pending']);
         ?>
     </fieldset>
     <?= $this->Form->button(__('Submit')) ?>

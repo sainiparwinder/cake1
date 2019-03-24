@@ -32,7 +32,7 @@ class Friend extends Entity
         'status' => true,
         'created' => true,
         'modified' => true,
-        'user' => true
+        'user' => true,
         'budy' => true
     ];
 }
