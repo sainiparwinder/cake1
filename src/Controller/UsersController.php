@@ -15,22 +15,33 @@ use Cake\Routing\Router;
 class UsersController extends AppController {
 
     public $path;
+
     public function initialize() {
         parent::initialize();
         $this->Auth->allow(['login', 'add']);
-        $this->path=Router::url("/",true);
-
+        $this->path = Router::url("/", true);
     }
+
+    public function test(){
+        $str = '{"suggestions":[{"id":10,"email_phone":"ram","name":"Test 213","surname":"ram","address":"ram","profile_image":"ram","created":"2019-03-18T02:37:14+00:00","modified":"2019-03-24T05:35:16+00:00"},{"id":11,"email_phone":"test","name":"Test User","surname":"Test","address":"test","profile_image":"","created":"2019-03-24T05:33:56+00:00","modified":"2019-03-24T05:35:23+00:00"}]}';
+        pr($str);
+        $array = json_decode($str);
+        pr($array);
+
+        $json = json_encode($array);
+        pr($json);
+        die;
+    }
+
     public function searchFriend() {
-        
-        $keyword=$this->request->query('keyword');
-        $query=$this->Users->find('all',['conditions'=>['name Like'=>'%'.$keyword.'%']]);
-                $users = $this->paginate($query);
 
-        $this->set(compact('users'));
+        $keyword = $this->request->getQuery('keyword');
+        $users = $this->Users->find('all')->select(['id', 'name'])->where(['name Like' => '%' . $keyword . '%'])->all();
+        echo json_encode(['suggestions'=>$users]);
+        exit;
     }
-   
-   
+
+
     /**
      * Index method
      *
@@ -111,7 +122,7 @@ class UsersController extends AppController {
         if ($this->request->is(['patch', 'post', 'put'])) {
             $user = $this->Users->patchEntity($user, $this->request->getData());
             if ($this->Users->save($user)) {
-                if($id == $this->Auth->user('id')) {
+                if ($id == $this->Auth->user('id')) {
                     $this->Auth->setUser($user);
                 }
                 $this->Flash->success(__('The user has been saved.'));

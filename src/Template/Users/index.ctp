@@ -1,4 +1,4 @@
-
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 
 <?php $userdata= $this->request->session()->read('Auth.User') ?>  
 <nav class="navbar navbar-inverse">
@@ -15,8 +15,8 @@
       <ul class="nav navbar-nav">
         <li class="active"><a href="#">Home</a></li>
         <li><a href="#">Messages</a></li>
-        <li><?= $this->Form->control('search'); ?></li>
-        <li><?= $this->Form->button(__('Submit'),['class'=>'btn btn-default','id'=>'searchbtn']) ?></li>
+        <li><?= $this->Form->control('search', ['class'=>'form-control']); ?></li>
+        <li><?= $this->Form->button(__('Submit'),['class'=>'btn btn-success','id'=>'searchbtn']) ?></li>
       </ul>
       <ul class="nav navbar-nav navbar-right">
         <li><?= $this->Html->link(__('Log out'), ['controller' => 'Users','action' => 'logout']) ?></li>
@@ -146,6 +146,12 @@
           if(search!=''){
        searchFriend(search);
       }
+
+            $('.wella').on('click','.add-as-friend', function () {
+                addFriend($(this).attr('id'));
+
+            });
+
     });
     function searchFriend(search){
         var data=search;
@@ -153,12 +159,33 @@
             method:'get',
             url: "<?php echo $this->Url->build(['controller'=>'Users','action' => 'searchFriend',]); ?>",
             data: {keyword:data},
+            dataType:"JSON",
             success: function(response){
-                $('.wella').html(response);
-                console.log(response); 
+                var userTemplate = '<button class="btn btn-success btn-sm add-as-friend" id="{id}"> <i class="fa fa-plus"></i> Add {name} as Friend</button><br /><br />';
+
+                if(response.suggestions.length > 0){
+                    $.each(response.suggestions, function (index, user) {
+                       var btn = userTemplate.replace("{id}", user.id);
+                        btn = btn.replace("{name}", user.name);
+                        $('.wella').append(btn);
+                    });
+                }
             }
         });
     };
+
+        function addFriend(id) {
+            var data = id;
+            $.ajax({
+                method: 'get',
+                url: "<?php echo $this->Url->build(['controller' => 'Friends', 'action' => 'addFriend']); ?>",
+                data: {keyword: data},
+                success: function (response) {
+                    $('.wella').html(response);
+                    console.log(response);
+                }
+            });
+        };
  
 });
 </script>
