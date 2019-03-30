@@ -56,11 +56,11 @@ $cakeDescription = 'CakePHP: the rapid development php framework';
             <ul class="right">
                 
                 <?php if($userdata): ?> 
-                    <li><?= $this->Html->link(__($userdata['name']), ['action' => 'edit', $userdata['id']]) ?></li>
-                     <li><?= $this->Html->link(__('Log out'), ['action' => 'logout']) ?></li>
+                    <li><?= $this->Html->link(__($userdata['name']), ['controller' => 'Users','action' => 'edit', $userdata['id']]) ?></li>
+                     <li><?= $this->Html->link(__('Log out'), ['controller' => 'Users','action' => 'logout']) ?></li>
                 
                 <?php else: ?>
-                 <li><?= $this->Html->link(__('Log In'), ['action' => 'login']) ?></li>    
+                 <li><?= $this->Html->link(__('Log In'), ['controller' => 'Users','action' => 'login']) ?></li>    
                 <?php endif; ?>
             </ul>
         </div>

@@ -37,6 +37,20 @@ class FriendsController extends AppController {
 
         $this->set('friend', $friend);
     }
+    public function addFriend() {
+        $friend = $this->Friends->newEntity();
+        if ($this->request->is('ajax')) {
+             $keyword=$this->request->query('keyword');
+              $userData = $this->Auth->user('id');
+              $data = [
+                'budy_id' => $keyword,
+                'user_id' => $userData,
+                'status' => 'pending'
+            ];
+            $friend = $this->Friends->patchEntity($friend, $data);
+            $this->Friends->save($friend);
+        }
+    }
 
     /**
      * Add method

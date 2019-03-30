@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Controller\AppController;
+use Cake\Routing\Router;
 
 /**
  * Users Controller
@@ -13,18 +14,30 @@ use App\Controller\AppController;
  */
 class UsersController extends AppController {
 
-
+    public $path;
     public function initialize() {
         parent::initialize();
         $this->Auth->allow(['login', 'add']);
-    }
+        $this->path=Router::url("/",true);
 
+    }
+    public function searchFriend() {
+        
+        $keyword=$this->request->query('keyword');
+        $query=$this->Users->find('all',['conditions'=>['name Like'=>'%'.$keyword.'%']]);
+                $users = $this->paginate($query);
+
+        $this->set(compact('users'));
+    }
+   
+   
     /**
      * Index method
      *
      * @return \Cake\Http\Response|void
      */
     public function index() {
+        $this->viewBuilder()->setLayout('face');
         $userData = $this->Auth->user();
         //pr($userData); die;
 
@@ -32,6 +45,7 @@ class UsersController extends AppController {
 
         $this->set(compact('users'));
         $this->set('user_session', $userData);
+        $this->set('urll', $this->path);
     }
 
     public function login() {
