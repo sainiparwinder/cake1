@@ -4,7 +4,7 @@ namespace App\Controller;
 
 use App\Controller\AppController;
 use Cake\Routing\Router;
-
+use Cake\ORM\TableRegistry;
 /**
  * Users Controller
  *
@@ -33,15 +33,6 @@ class UsersController extends AppController {
         die;
     }
 
-    public function searchFriend() {
-
-        $keyword = $this->request->getQuery('keyword');
-        $users = $this->Users->find('all')->select(['id', 'name'])->where(['name Like' => '%' . $keyword . '%'])->all();
-        echo json_encode(['suggestions'=>$users]);
-        exit;
-    }
-
-
     /**
      * Index method
      *
@@ -49,14 +40,15 @@ class UsersController extends AppController {
      */
     public function index() {
         $this->viewBuilder()->setLayout('face');
-        $userData = $this->Auth->user();
-        //pr($userData); die;
-
+        $userData = $this->Auth->user();   
         $users = $this->paginate($this->Users);
-
         $this->set(compact('users'));
         $this->set('user_session', $userData);
-        $this->set('urll', $this->path);
+        $query = $this->Users->find('all')->select(['profile_image'])->where(['id' => $this->Auth->user('id')]);
+        $results = $query->toArray();
+        $imageName=$results['0']['profile_image'];
+        $urll=$this->path.$imageName;
+        $this->set('urll', $urll);
     }
 
     public function login() {
@@ -152,4 +144,32 @@ class UsersController extends AppController {
 
         return $this->redirect(['action' => 'index']);
     }
+    public function searchFriend() {
+
+        $keyword = $this->request->getQuery('keyword');
+        $users = $this->Users->find('all')->select(['id', 'name'])->where(['name Like' => '%' . $keyword . '%','id !=' => $this->Auth->user('id')])->all();
+        echo json_encode(['suggestions'=>$users]);
+        exit;
+    }
+
+    public function profilePhoto(){
+      $friend = TableRegistry::get('Users');
+
+      //$id = $this->Auth->user('id');
+        if($this->request->is('post')){         
+            if(!empty($this->request->data['file']['name'])){
+                $fileName=$this->request->data['file']['name'];
+                $uploadFile=$this->path.'webroot/img/uploads/'.$fileName;
+                $tmpPath=$this->request->data['file']['tmp_name'];
+               // if(move_uploaded_file($tmpPath,$uploadFile)){
+                    $user=$this->Users->get($this->Auth->user('id'));
+                    $user->profile_image="webroot/img/uploads/".$fileName;
+                    $this->Users->save($user);
+                     return $this->redirect(['controller' => 'Users', 'action' => 'index']);
+               // }
+            }
+        }
+        exit;
+    }
+
 }

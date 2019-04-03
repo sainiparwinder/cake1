@@ -1,7 +1,7 @@
 <?php
 
 namespace App\Controller;
-
+use Cake\ORM\TableRegistry;
 use App\Controller\AppController;
 
 /**
@@ -37,20 +37,7 @@ class FriendsController extends AppController {
 
         $this->set('friend', $friend);
     }
-    public function addFriend() {
-        $friend = $this->Friends->newEntity();
-        if ($this->request->is('ajax')) {
-             $keyword=$this->request->query('keyword');
-              $userData = $this->Auth->user('id');
-              $data = [
-                'budy_id' => $keyword,
-                'user_id' => $userData,
-                'status' => 'pending'
-            ];
-            $friend = $this->Friends->patchEntity($friend, $data);
-            $this->Friends->save($friend);
-        }
-    }
+
 
     /**
      * Add method
@@ -112,5 +99,45 @@ class FriendsController extends AppController {
         }
 
         return $this->redirect(['action' => 'index']);
+    }
+    public function friendRequest() {
+         $userData = $this->Auth->user();
+
+         $fr = $this->Friends;
+         $query = $fr->find('all', ['contain' => ['Budies']])->select(['id','Budies.name'])->contain(['Users'])->where(['user_id' => $userData['id']]);
+         echo json_encode(['req'=>$query]);
+        exit;
+    }
+    public function addFriend() {
+        $friend = $this->Friends->newEntity();
+        if ($this->request->is('ajax')) {
+             $keyword=$this->request->query('keyword');
+              $userData = $this->Auth->user('id');
+              $data = [
+                'budy_id' => $keyword,
+                'user_id' => $userData,
+                'status' => 'pending'
+            ];
+            $friend = $this->Friends->patchEntity($friend, $data);
+            $this->Friends->save($friend);
+        }
+    } 
+    public function updateRequest(){
+        if ($this->request->is('ajax')) {
+            $status=$this->request->query('status');
+            
+            if($status=="accept"){
+               $id=$this->request->query('id');
+               $friend = $this->Friends->get($id);
+               $friend->status=$status;
+               $this->Friends->save($friend);
+            }
+            if($status=="delete"){
+                $id=$this->request->query('id');
+                $friend=$this->Friends->get($id);
+                $this->Friends->delete($friend);
+            }
+        } 
+        exit;      
     }
 }

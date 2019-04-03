@@ -17,6 +17,9 @@
         <li><a href="#">Messages</a></li>
         <li><?= $this->Form->control('search', ['class'=>'form-control']); ?></li>
         <li><?= $this->Form->button(__('Submit'),['class'=>'btn btn-success','id'=>'searchbtn']) ?></li>
+        <li><?= $this->Form->button(__('friend'),['class'=>'btn btn-success','id'=>'frbtn']) ?></li>
+        <li></li>
+        <li><?= $this->Form->create(null, ['url' => ['action' => 'profilePhoto'],'type' => 'file']); ?><?= $this->Form->control('file', ['type'=>'file','class'=>'form-control']); ?><?= $this->Form->button(__('Submit')); ?><?= $this->Form->end() ?></li>
       </ul>
       <ul class="nav navbar-nav navbar-right">
         <li><?= $this->Html->link(__('Log out'), ['controller' => 'Users','action' => 'logout']) ?></li>
@@ -32,7 +35,7 @@
     <div class="col-sm-3 well">
       <div class="well">
         <p><a href="#">My Profile</a></p>
-        <img src="<?= $urll ?>webroot/img/GuruNanak.jpg" class="img-circle" height="65" width="65" alt="Avatar">
+        <img src='<?= $urll  ?>' class="img-circle" height="65" width="65" alt="Avatar">
       </div>
       <div class="well">
         <p><a href="#">Interests</a></p>
@@ -130,7 +133,7 @@
         <p>Fri. 27 November 2015</p>
         <button class="btn btn-primary">Info</button>
       </div>      
-      <div class="well">
+      <div class="wellaa">
         <p>ADS</p>
       </div>
       <div class="wella">
@@ -140,19 +143,16 @@
   </div>
 </div>
 <script>
-    $('document').ready(function(){
+$('document').ready(function(e){
         $('#searchbtn').click(function(){
-            var search=$('#search').val();
+          var search=$('#search').val();
           if(search!=''){
-       searchFriend(search);
-      }
-
-            $('.wella').on('click','.add-as-friend', function () {
+            searchFriend(search);
+          }
+          $('.wella').on('click','.add-as-friend', function () {
                 addFriend($(this).attr('id'));
-
-            });
-
-    });
+              });
+        });
     function searchFriend(search){
         var data=search;
         $.ajax({
@@ -173,8 +173,7 @@
             }
         });
     };
-
-        function addFriend(id) {
+    function addFriend(id) {
             var data = id;
             $.ajax({
                 method: 'get',
@@ -182,6 +181,58 @@
                 data: {keyword: data},
                 success: function (response) {
                     $('.wella').html(response);
+                    console.log(response);
+                }
+            });
+        };
+          function request(){
+        var data= "ram";
+        $.ajax({
+            method:'get',
+            url: "<?php echo $this->Url->build(['controller'=>'Friends','action' => 'friendRequest',]); ?>",
+            data: {keyword:data},
+            dataType:"JSON",
+            success: function(response){
+                var userTemplate1 = '<div class="w3-card-4 w3-dark-grey"><div class="w3-container w3-center"><h3>{name}</h3><img src="img_avatar3.png" alt="Avatar" style="width:80%"><h5>John Doe</h5> <button class="w3-button w3-green accept-request" id="{id}">Accept</button> <button class="w3-button w3-red delete-request" id="{delete}">Delete</button></div></div> ';
+
+                if(response.req.length > 0){
+                    $.each(response.req, function (index, fr) {
+                      var   btn1 = userTemplate1.replace("{name}", fr.budy.name);
+                        btn1 = btn1.replace("{id}", fr.id);
+                        btn1 = btn1.replace("{delete}", fr.id);
+                   
+                        $('.wellaa').append(btn1);
+                    });
+                }
+            }
+        });
+    };
+            $('#frbtn').click(function(){
+            {
+       request();
+         
+      }
+
+            $('.wellaa').on('click','.accept-request', function () {
+                updateRequest($(this).attr('id'),"accept");
+
+            });
+            $('.wellaa').on('click','.delete-request', function () {
+                updateRequest($(this).attr('id'),"delete");
+
+            });          
+
+    });
+        function updateRequest(id,x) {
+            var id = id;
+            var status=x;
+       
+            $.ajax({
+                method: 'get',
+                url: "<?php echo $this->Url->build(['controller' => 'Friends', 'action' => 'updateRequest']); ?>",
+                data: {id: id,status:status},
+                success: function (response) {
+                    //$('.wella').html(response);
                     console.log(response);
                 }
             });
