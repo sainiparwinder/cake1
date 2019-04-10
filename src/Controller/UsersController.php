@@ -4,7 +4,8 @@ namespace App\Controller;
 
 use App\Controller\AppController;
 use Cake\Routing\Router;
-use Cake\ORM\TableRegistry;
+use Cake\ORM\Locator\TableLocator;
+
 /**
  * Users Controller
  *
@@ -22,7 +23,7 @@ class UsersController extends AppController {
         $this->path = Router::url("/", true);
     }
 
-    public function test(){
+    public function test() {
         $str = '{"suggestions":[{"id":10,"email_phone":"ram","name":"Test 213","surname":"ram","address":"ram","profile_image":"ram","created":"2019-03-18T02:37:14+00:00","modified":"2019-03-24T05:35:16+00:00"},{"id":11,"email_phone":"test","name":"Test User","surname":"Test","address":"test","profile_image":"","created":"2019-03-24T05:33:56+00:00","modified":"2019-03-24T05:35:23+00:00"}]}';
         pr($str);
         $array = json_decode($str);
@@ -40,14 +41,14 @@ class UsersController extends AppController {
      */
     public function index() {
         $this->viewBuilder()->setLayout('face');
-        $userData = $this->Auth->user();   
+        $userData = $this->Auth->user();
         $users = $this->paginate($this->Users);
         $this->set(compact('users'));
         $this->set('user_session', $userData);
         $query = $this->Users->find('all')->select(['profile_image'])->where(['id' => $this->Auth->user('id')]);
         $results = $query->toArray();
-        $imageName=$results['0']['profile_image'];
-        $urll=$this->path.$imageName;
+        $imageName = $results['0']['profile_image'];
+        $urll = $this->path . $imageName;
         $this->set('url', $this->path);
         $this->set('imgName', $imageName);
     }
@@ -145,37 +146,32 @@ class UsersController extends AppController {
 
         return $this->redirect(['action' => 'index']);
     }
+
     public function searchFriend() {
- $friend = TableRegistry::get('Friends');
+        $this->loadModel('Friends');
         $keyword = $this->request->getQuery('keyword');
-       
-  $query1 = $friend->find('all')->select(['id','user_id', 'budy_id', 'status'])->where([
-        'OR' => [['user_id' => $this->Auth->user('id')], ['budy_id' => $this->Auth->user('id')]],]
-    );
 
-        $searchlist = $this->Users->find('all')->select(['id', 'name','profile_image'])->where(['name Like' => '%' . $keyword . '%'])->all();
+        $query1 = $this->Friends->find('all')->select(['id', 'user_id', 'budy_id', 'status'])->where(['OR' => [['user_id' => $this->Auth->user('id')], ['budy_id' => $this->Auth->user('id')]],]);
 
- 
-
-        echo json_encode(['suggestions'=>$searchlist, 'suggestions1'=>$query1]);
+        $searchlist = $this->Users->find('all')->select(['id', 'name', 'profile_image'])->where(['name Like' => '%' . $keyword . '%', 'id' => $this->Auth->user('id')])->all();
+        sleep(1);
+        echo json_encode(['suggestions' => $searchlist, 'suggestions1' => $query1]);
         exit;
     }
 
-    public function profilePhoto(){
-      $friend = TableRegistry::get('Users');
-
-      //$id = $this->Auth->user('id');
-        if($this->request->is('post')){         
-            if(!empty($this->request->data['file']['name'])){
-                $fileName=$this->request->data['file']['name'];
-                $uploadFile=$this->path.'webroot/img/uploads/'.$fileName;
-                $tmpPath=$this->request->data['file']['tmp_name'];
-               // if(move_uploaded_file($tmpPath,$uploadFile)){
-                    $user=$this->Users->get($this->Auth->user('id'));
-                    $user->profile_image="webroot/img/uploads/".$fileName;
+    public function profilePhoto() {
+        if ($this->request->is('post')) {
+            $file = $this->request->getData('file');
+            if (!empty($file['name'])) {
+                $fileName = $file['name'];
+                $uploadFile = WWW_ROOT . '/img/uploads/' . $fileName;
+                if (move_uploaded_file($file['tmp_name'], $uploadFile)) {
+                    $user = $this->Users->get($this->Auth->user('id'));
+                    $user->profile_image = 'img/uploads/' . $fileName;
                     $this->Users->save($user);
-                     return $this->redirect(['controller' => 'Users', 'action' => 'index']);
-               // }
+                    $this->Auth->setUser($user);
+                    return $this->redirect(['controller' => 'Users', 'action' => 'index']);
+                }
             }
         }
         exit;
