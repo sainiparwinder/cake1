@@ -101,11 +101,18 @@ class FriendsController extends AppController {
         return $this->redirect(['action' => 'index']);
     }
     public function friendRequest() {
-         $userData = $this->Auth->user();
+        $b = TableRegistry::get('Budies');
 
-         $fr = $this->Friends;
-         $query = $fr->find('all', ['contain' => ['Budies']])->select(['id','Budies.name'])->contain(['Users'])->where(['user_id' => $userData['id']]);
-         echo json_encode(['req'=>$query]);
+         $userData = $this->Auth->user();
+          $fr = $this->Friends;
+  
+          $query = $fr->find('all', ['contain' => ['Budies','Users']])->where(['status'=>'accept',
+        'OR' => [['user_id' => $this->Auth->user('id')], ['budy_id' => $this->Auth->user('id')]],]
+    );
+
+           echo json_encode(['req'=>$query]);
+
+ 
         exit;
     }
     public function addFriend() {

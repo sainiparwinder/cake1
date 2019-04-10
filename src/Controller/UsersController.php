@@ -48,7 +48,8 @@ class UsersController extends AppController {
         $results = $query->toArray();
         $imageName=$results['0']['profile_image'];
         $urll=$this->path.$imageName;
-        $this->set('urll', $urll);
+        $this->set('url', $this->path);
+        $this->set('imgName', $imageName);
     }
 
     public function login() {
@@ -145,10 +146,18 @@ class UsersController extends AppController {
         return $this->redirect(['action' => 'index']);
     }
     public function searchFriend() {
-
+ $friend = TableRegistry::get('Friends');
         $keyword = $this->request->getQuery('keyword');
-        $users = $this->Users->find('all')->select(['id', 'name'])->where(['name Like' => '%' . $keyword . '%','id !=' => $this->Auth->user('id')])->all();
-        echo json_encode(['suggestions'=>$users]);
+       
+  $query1 = $friend->find('all')->select(['id','user_id', 'budy_id', 'status'])->where([
+        'OR' => [['user_id' => $this->Auth->user('id')], ['budy_id' => $this->Auth->user('id')]],]
+    );
+
+        $searchlist = $this->Users->find('all')->select(['id', 'name','profile_image'])->where(['name Like' => '%' . $keyword . '%'])->all();
+
+ 
+
+        echo json_encode(['suggestions'=>$searchlist, 'suggestions1'=>$query1]);
         exit;
     }
 
